@@ -31,17 +31,28 @@
                                     <v-list-tile-content>
                                         <v-list-tile-title>Name: {{ (venue.name) }}
                                         </v-list-tile-title>
+                                        <v-list-tile-title>Registered: {{ (venue.isRegistered) }}
+                                        </v-list-tile-title>
                                         <v-list-tile-sub-title>Description: {{ venue.description }}
                                         </v-list-tile-sub-title>
                                     </v-list-tile-content>
-                                    <v-btn icon x-smal ripple><v-icon color="grey lighten-1">check_circle_outline</v-icon></v-btn>
-                                    <v-btn icon x-smal ripple><v-icon color="grey lighten-1">remove_circle_outline</v-icon></v-btn>
-                                 </v-list-tile>
-                                 
+                                    <v-btn icon x-smal ripple>
+                                        <v-icon color="grey lighten-1"
+                                            @click="selectedVenue=venue; registerDockingStation()">check_circle_outline
+                                        </v-icon>
+                                    </v-btn>
+                                    <v-btn icon x-smal ripple>
+                                        <v-icon color="grey lighten-1"
+                                            @click="selectedVenue=venue;removeDockingStation()">
+                                            remove_circle_outline</v-icon>
+                                    </v-btn>
+                                </v-list-tile>
                                 <v-divider v-if="index + 1 < venueLocations.length" :key="index"></v-divider>
                             </template>
                         </v-list>
                         <InfiniteLoading @infinite="loadvenueLocations" spinner="waveDots"></InfiniteLoading>
+                        <loading :active.sync="isLoading" :can-cancel="false" :is-full-page="fullPage">
+                        </loading>
                     </v-card>
                 </v-flex>
             </v-layout>
@@ -49,6 +60,7 @@
     </v-app>
 </template>
 <script>
+    import Loading from 'vue-loading-overlay';
     import 'vue-loading-overlay/dist/vue-loading.css';
     import InfiniteLoading from 'vue-infinite-loading';
     import {
@@ -57,6 +69,11 @@
     import {
         mapActions
     } from 'vuex'
+    import EmbarkJS from '../../embarkArtifacts/embarkjs';
+    import Swal from 'sweetalert2'
+    import {
+        async
+    } from 'q';
 
     // Those Vue props will update automatically
     // (Two-way binding with .sync modifier)
@@ -79,10 +96,15 @@
 
     export default {
         components: {
-            InfiniteLoading
+            InfiniteLoading,
+            Loading
         },
         data() {
             return {
+                remove: false,
+                add: false,
+                fullPage: true,
+                isLoading: false,
                 selectedVenue: null,
                 RhodeITSmartContract: null,
                 center: {
@@ -91,65 +113,196 @@
                 },
                 venueLocations: [],
                 dialog: null,
-                zoom: 8
+                zoom: 8,
+                Web3: null
+            }
+        },
+        watch: {
+            venueLocations: function () {
+                let This = this
+                //console.log('This.Rhode', This.RhodeITSmartContract)
+                if (This.RhodeITSmartContract) {
+                    This.RhodeITSmartContract.methods.getRegisteredDockingStationKeys().call({
+                        gas: 8000000
+                    }).then((keys, err) => {
+                        if (err) {
+                            This.error("Something went wrong: ", err)
+                            //console.log("err: ", err)
+                        } else {
+                            if (keys.length > 0) {
+                                keys.forEach(key => {
+                                    This.RhodeITSmartContract.methods.getDockingStation(key).call({
+                                        gas: 8000000
+                                    }).then((station, err) => {
+                                        if (err) {
+                                            This.error("Something went wrong: ", err)
+                                            //console.log("err: ", err)
+                                        } else {
+                                            var name = station.name
+                                            var lat = station.latitude
+                                            var long = station.longitude
+                                            This.venueLocations = This.venueLocations.map((
+                                                venue) => {
+                                                //console.log(venue.name)
+                                               // console.log("!keys.includes(veneu.name)",!keys.includes(venue.name))
+                                                if (venue.name === name) {
+                                                    venue.isRegistered = "Yes"
+                                                } else if(!keys.includes(venue.name)) {
+                                                    venue.isRegistered = "No"
+                                                }
+                                                return venue
+                                            })
+                                        }
+                                    }).catch((err) => {
+                                        //console.log(err)
+                                    })
+                                });
+                            } else {
+                                This.venueLocations.map((venue) => {
+                                    venue.isRegistered = "No"
+                                    return venue
+                                })
+                            }
+                        }
+                    }).catch((err) => {
+                        This.error("Something went wrong: ", err)
+                        //console.log("err: ", err)
+                    })
+                }
+            },
+            RhodeITSmartContract: async function () {
+                let This = this
+                this.RhodeITSmartContract.methods.getRegisteredDockingStationKeys().call({
+                    gas: 8000000
+                }).then((keys, err) => {
+                    if (err) {
+                        This.error("Something went wrong: ", err)
+                        //console.log("err: ", err)
+                    } else {
+                        if (keys.length > 0) {
+                            console.log("Keys: ", keys)
+                            keys.forEach(key => {
+                                This.RhodeITSmartContract.methods.getDockingStation(key).call({
+                                    gas: 8000000
+                                }).then((station, err) => {
+                                    if (err) {
+                                        This.error("Something went wrong: ", err)
+                                        //console.log("err: ", err)
+                                    } else {
+                                        var name = station.name
+                                        var lat = station.latitude
+                                        var long = station.longitude
+                                        This.venueLocations = This.venueLocations.map((
+                                            venue) => {
+                                            if (venue.name === name) {
+                                                venue.isRegistered = "Yes"
+                                            }
+                                            return venue
+                                        })
+                                    }
+                                }).catch((err) => {
+                                    //console.log(err)
+                                })
+                            });
+                        } else {
+                            this.venueLocations.map((venue) => {
+                                venue.isRegistered = "No"
+                                return venue
+                            })
+                        }
+                    }
+                }).catch((err) => {
+                    this.error("Something went wrong: ", err)
+                    //console.log("err: ", err)
+                })
             }
         },
         mounted() {
             this.init()
         },
         methods: {
-
             init() {
-                load('AIzaSyCjMY_194mgeHLsyhlPre7kZ-UVXHCCt0o')
+                EmbarkJS.onReady((err) => {
+                    //console.log(err)
+                    this.RhodeITSmartContract = require('../../embarkArtifacts/contracts/RhodeIT').default
+                    this.Web3 = EmbarkJS
+                    //console.log(this.RhodeITSmartContract)
+                })
             },
-            ...mapActions('layout', [
-                'toggleSideNav',
-            ]),
             loadvenueLocations($state) {
                 var venues = require('../json/venues.json')
-                console.log(venues)
-
-                for (var i = 0; i < venues.length; i++) {
+                //console.log(venues)
+                let This = this
+                venues.forEach((venue)=> {
                     this.venueLocations.push({
-                        name: venues[i].properties.name,
-                        description: venues[i].properties.desc,
+                        name: venue.properties.name,
+                        description: venue.properties.desc,
                         position: {
-                            lat: venues[i].geometry.coordinates[0],
-                            lng: venues[i].geometry.coordinates[1]
-                        }
+                            lat: venue.geometry.coordinates[1],
+                            lng: venue.geometry.coordinates[0]
+                        },
+                        isRegistered: 'Querying Contract...'
                     })
+                    //console.log(This.RhodeITSmartContract)
                     $state.loaded()
-                }
+                })
                 $state.complete()
             },
             getVenueDetails(index) {
-                console.log(this.venueLocations[index])
+                //console.log(this.venueLocations[index])
                 return this.venueLocations[index]
             },
-            showVenueOnMap() {}
-        },
-        mixins: [
-            // You need to use this mixin
-            MapElement,
-        ],
-        // When Google Maps is ready
-        googleMapsReady() {
-            if (!this.$_map || this.$_marker) return
-            console.log("here")
-            const options = Object.assign({}, this.$props)
-            options.map = this.$_map
-
-            // Create Google Maps objects
-            this.$_marker = new window.google.maps.Marker(options)
-            // Bind the Vue props
-            this.bindProps(this.$_marker, boundProps)
-            // Emit the events from Google Maps
-            this.redirectEvents(this.$_marker, redirectedEvents)
-        },
-        beforeDestroy() {
-            // Teardown
-            if (this.$_marker) {
-                this.$_marker.setMap(null)
+            registerDockingStation: async function () {
+                this.isLoading = true
+                let This = this
+                //console.log(this.selectedVenue)
+                this.RhodeITSmartContract.methods.registerDockingStation(this.selectedVenue.name, this
+                    .selectedVenue.position.lat.toString(), this.selectedVenue.position.lng.toString()).send({
+                    gas: 8000000
+                }).then((
+                    receipt, err) => {
+                    if (err) {
+                        This.error("Something went wrong: ", err)
+                        //console.log("err: ", err)
+                    } else {
+                        This.success("Successfully Registered Docking Station")
+                    }
+                    This.isLoading = false
+                }).catch((err) => {
+                    This.error("Something went wrong: ", err)
+                    //console.log("err: ", err)
+                    This.isLoading = false
+                })
+            },
+            removeDockingStation: async function () {
+                this.error("Seems the function hasnt been implemented as yet!!")
+            },
+            showVenueOnMap() {},
+            triggerUpdate() {
+                this.venueLocations = require('../json/venues.json')
+            },
+            errorWithFooter(footerMessage, text) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'OH Noo',
+                    text: text,
+                    footer: footerMessage
+                })
+            },
+            error(message) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'And i-oop...',
+                    text: message,
+                    allowOutsideClick: true
+                })
+            },
+            success(message) {
+                Swal.fire(
+                    'Success',
+                    message,
+                    'success'
+                )
             }
         }
     }

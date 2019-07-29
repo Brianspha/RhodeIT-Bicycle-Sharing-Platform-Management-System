@@ -11,7 +11,7 @@ Vue.use(VueRouter)
 export default new VueRouter({
     routes: [{
             path: "/",
-            redirect: "registerDockingStations"
+            redirect: "RegisterDockingStation"
         },
         {
             name: 'registerDockingStations',

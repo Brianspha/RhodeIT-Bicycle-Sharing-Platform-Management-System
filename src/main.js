@@ -8,17 +8,14 @@ import VueRecyclerviewNew from 'vue-recyclerview'
 import infiniteScroll from 'vue-infinite-scroll'
 import 'vue-googlemaps/dist/vue-googlemaps.css'
 import VueGoogleMaps from 'vue-googlemaps'
-
-Vue.use(VueGoogleMaps, {
-  load: {
-    // Google API key
-    apiKey: 'AIzaSyAXwlptaSId-lWkaCP0VzCh5YAajrygxaM',
-    // Enable more Google Maps libraries here
-    libraries: ['places'],
-    // Use new renderer
-    useBetaRenderer: false,
-  },
-})
+import { Icon } from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+delete Icon.Default.prototype._getIconUrl;
+Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
 Vue.use(infiniteScroll)
 Vue.use(VueRecyclerviewNew)
 Vue.use(VueAsyncData)

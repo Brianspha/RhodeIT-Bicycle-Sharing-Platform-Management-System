@@ -1,0 +1,50 @@
+{
+  "0x6ef4db78b962e5c3e61e9e0d36e7a03ee1cebe148200b821c7207f796b4b3e91": {
+    "contracts": {
+      "0xfd965fa17e6dbc930c813366aab3cb0b754da6547e102a595fe90006b1c6e981": {
+        "name": "RhodeIT",
+        "address": "0x36B8fdBa9Ab98AA1a2cd266c70C3F0381D3Dd0AD"
+      },
+      "0xc25379df48e21ced6479b60df03b5b00a2ac8867089b8cfdfd2030f0bce2419a": {
+        "name": "RhodeIT",
+        "address": "0x8dB38e5bbB05061D2845ae9057eB323bD1E55A3c"
+      },
+      "0xc2754a4e57277bb897db0581e0a7cb77e66e6a8f6868f674f612affb3e8ab4b6": {
+        "name": "RhodeIT",
+        "address": "0xfdA0F2b0f035ce20Da6458debCE5937A32dA0B47"
+      },
+      "0xcd72f174371ef3653453a9e2faa37e85f757c770f95e05411217647aa9a0dfed": {
+        "name": "RhodeIT",
+        "address": "0x46f439fec1b1e6fc84060C64602de2099Db4Cc76"
+      },
+      "0x767931b1844e62bac54b902af53c2689965da2b61d559a04150c6cbf7a1a1e66": {
+        "name": "RhodeIT",
+        "address": "0xDa2188ec98fFC2bdD69E32a8F0aF0AA484A84F8B"
+      },
+      "0x999e989e7acb8aa501f0255561b0f9367650a14719624f8f20d40fea1b783fd2": {
+        "name": "RhodeIT",
+        "address": "0x2367e238b1550FA6c96dC63f48B358cFF25292B4"
+      },
+      "0x722f433d04ac1101a17cf1e506fdce1b122540ccf809cf204939bfdc14789266": {
+        "name": "RhodeIT",
+        "address": "0x57fC153c4C2D367A00AdD09E3106A69332cF4448"
+      },
+      "0x65c422323a376287e5c60f83d7590207ce4e3bf85282491468ad962fc04429ec": {
+        "name": "RhodeIT",
+        "address": "0x74C8668C2Ab0aE140e9C66d2C3dC92814515B5F6"
+      },
+      "0xf7308356ff5bc988705897b8a25db3c1bc4b4073fa5b8bec46db9b74c8de57fe": {
+        "name": "RhodeIT",
+        "address": "0x3F3c165111f67Cbd6f3A1501D027000486759bFE"
+      },
+      "0x0e1790b1e2e2dca75ceb7bac3a62287b449edb1c8784b41a7736b614cc0b6f89": {
+        "name": "RhodeIT",
+        "address": "0x29406A79c6eF99E51ee2dFA706b83CBc80cAf87f"
+      },
+      "0x14b9921d63c0eb84c35daf57b4da06a8286a898aa372142a8de49d659e9b50a3": {
+        "name": "RhodeIT",
+        "address": "0x68AE68f8e4F89fDb3B5227FF3ffb8E57a65F49fA"
+      }
+    }
+  }
+}

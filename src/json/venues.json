@@ -100,6 +100,34 @@
   {
     "type": "Feature",
     "properties": {
+      "name": "Winchester House",
+      "desc": "Male Residence Located on the outskirts of Campus"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.5241,
+        -33.3162
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "name": "Hiltop 7 Residence",
+      "desc": "Male Residence Located at the top of Campus"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        26.5104,
+        -33.3186
+      ]
+    }
+  },
+  {
+    "type": "Feature",
+    "properties": {
       "name": "Sociology Department",
       "desc": ""
     },

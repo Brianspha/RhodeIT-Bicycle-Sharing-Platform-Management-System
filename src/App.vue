@@ -93,7 +93,7 @@
         {
           icon: 'edit_location',
           text: 'View Docking Stations',
-          to: "/RegisteredDockingStationsView",
+          to: "/RegisteredDockingStations",
           render: true
         },
         {
@@ -116,13 +116,49 @@
         }
       ],
     }),
-    mounted() {},
+    mounted() {
+      this.watchForAccountChanges()
+    },
     props: {
       source: String
     },
     methods: {
-
-
+      watchForAccountChanges() {
+        let tempThis = this
+        window.ethereum.on('accountsChanged', function (accounts) {
+          location.reload()
+        })
+        window.ethereum.on('networkChanged', function (netId) {
+         location.reload()
+        })
+        window.ethereum.on('networkChanged', function (netId) {
+          location.reload()
+        })
+      },
+      errorWithFooter(footerMessage, text) {
+        Swal.fire({
+          type: 'error',
+          title: 'OH Noo',
+          text: text,
+          footer: footerMessage
+        })
+      },
+      error(message) {
+        Swal.fire({
+          type: 'error',
+          title: 'Oops...',
+          text: message,
+          allowOutsideClick: true
+        })
+      },
+      success(message) {
+        this.$snotify.success(message, {
+          timeout: 2000,
+          showProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true
+        })
+      }
 
     }
   }

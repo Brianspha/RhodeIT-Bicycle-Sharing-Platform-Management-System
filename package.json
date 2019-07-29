@@ -12,6 +12,8 @@
     "aos": "^2.3.4",
     "core-js": "^2.6.5",
     "embarkjs-connector-web3": "4.0.0",
+    "leaflet": "^1.5.1",
+    "leaflet.markercluster": "^1.4.1",
     "secure-ls": "^1.2.5",
     "sweetalert2": "^8.12.1",
     "vue": "^2.6.10",
@@ -25,6 +27,8 @@
     "vue-recyclerview": "^0.4.1",
     "vue-router": "^3.0.6",
     "vue-snotify": "^3.2.1",
+    "vue2-leaflet": "^2.2.1",
+    "vue2-leaflet-markercluster": "^3.0.0",
     "vuetify": "^1.5.14",
     "vuex": "^3.1.1",
     "web3": "^1.0.0-beta.55"
