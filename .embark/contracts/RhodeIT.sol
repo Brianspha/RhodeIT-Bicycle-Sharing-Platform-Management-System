@@ -2,26 +2,30 @@
  // Enable the ABI v2 Coder
  pragma experimental ABIEncoderV2;
 
-
+ import "../contracts/SafeMath.sol";
  /**
  *@Contract to help in the running of the Bicycle Sharing app
+ @dev the ABI V2 Encoder is enabled due to the limitations of Nethereum 
+  *issue- Nethereum is not able to convert from bytes32 to string which calls for the usage of the experimanatal ABI encoder
  @notice the contract is not optimised for gas because of the C# API not supporting certain web3 API calls
  */
  contract RhodeIT {
 
-
+     using SafeMath
+     for uint;
      /*====================*Struct section start ====================*/
      /**
-      * @dev represents a student
-      * @param studentNo represents a student registertation id
-      * @param studentNopassword represents a student no and password (hash) used as ID on the platform
-      * @param active used to check if a student exists on the system or not
-      */
+     * @dev represents a student
+     * @param studentNo represents a student registertation id
+     * @param studentNopassword represents a student no and password (hash) used as ID on the platform
+     * @param active used to check if a student exists on the system or not
+     @param credit represents how much credit the student has in they account
+     */
      struct Student {
          string studentNo;
-         uint256 usedCount;
+         uint credit;
          bool active;
-         mapping(uint256 => Bicycle) usedBicycles;
+         string[] usedBicycles;
      }
 
      event addUserLogger(bool indexed results);
@@ -33,16 +37,24 @@
      /**
      * @dev represents a bicycle to be used on the platform
      * @param id unique identification for the current instance of the Bicycle
+     @param dockedAt indicates where the bicycle is currently docked or which dockign station its docked in
      * @param userCount keeps track of the total no of students who hav used the bicycle used for iterating through
      @UserHistory
      * @param userHistory used to keep track of all students who have used the Bicycle
-     * @param indicates if instance exists or not
+     * @param active indicates if instance exists or not
+     @param isDocked indicates if the bicycle is docked or not
+     @param index represents the index location of in the docking s
+     @param features the specifications of the bicycle
      */
      struct Bicycle {
-         uint256 id;
+         string id;
+         string dockedAt;
          uint256 userCount;
          bool active;
-         mapping(string => Student) userHistory;
+         bool isDocked;
+         string[] userHistory;
+         uint256 index;
+         string features;
      }
      /**
      * @dev represents a venue to be used as a DockingStation
@@ -60,7 +72,7 @@
 
      /**
      * @dev represents a DockingStation on Campus
-     @param id represents the index of the Dockingstation on the Global mapping of DockingStations
+       @param id represents the index of the Dockingstation on the Global mapping of DockingStations
      * @param venueLocation represents the DockingStation on Campus
      * @param availableBicycles stores AvailableBicycles on the DockingStation
      * @param active indicates is instace exists or not
@@ -70,8 +82,8 @@
          string id;
          VenueLocation dockingStationInformation;
          uint256 count;
-         uint256[] availableBicyclesKeys;
-         mapping(uint256 => Bicycle) availableBicycles;
+         string[] availableBicyclesKeys;
+         mapping(string => Bicycle) availableBicycles;
          bool active;
      }
 
@@ -99,8 +111,9 @@
       *@dev represents the owner of the platform
       */
      address admin;
-
-
+     mapping(string => Bicycle) bicycles;
+     string[] bicycleKeys;
+     uint256 rideCost = 10;
 
      /*====================*modifiers section start ====================*/
 
@@ -127,8 +140,8 @@
       */
      function addUser(string memory studentNo) public returns(bool) {
          require(msg.sender != address(0), "Invalid sender address in addUser function");
+         require(!Students[studentNo].active, "Student already registered");
          Students[studentNo].studentNo = studentNo;
-         Students[studentNo].usedCount = 0;
          Students[studentNo].active = true;
          emit addUserLogger(true);
          return true;
@@ -146,7 +159,19 @@
          return Students[studentNo].active;
      }
 
+     function updateCredit(string memory studentNo, uint256 credit) public onlyAdmin returns(bool) {
+         require(msg.sender != address(0), "Invalid sender address in updateCredit function");
+         require(Students[studentNo].active, "Student not registered");
+         require(credit > 0, "new credit must be greater than 0");
+         Students[studentNo].credit = Students[studentNo].credit.add(credit);
+         return true;
+     }
 
+     function getUsercredit(string memory studentNo) public view returns(uint256) {
+         require(msg.sender != address(0), "Invalid sender address in updateCredit function");
+         require(Students[studentNo].active, "Student not registered");
+         return Students[studentNo].credit;
+     }
 
      /*====================Docking Station functions Section Start ====================*/
 
@@ -186,12 +211,77 @@
          return dockingStations[name].active;
      }
 
-     function getDockingStation(string memory id) public view returns(string memory name, string memory latitude, string memory longitude) {
+     function getDockingStation(string memory stationName) public view returns(string memory name, string memory latitude, string memory longitude) {
          require(msg.sender != address(0), "Invalid sender address");
-         name = dockingStations[id].dockingStationInformation.name;
-         latitude = dockingStations[id].dockingStationInformation.latitude;
-         longitude = dockingStations[id].dockingStationInformation.longitude;
+         name = dockingStations[stationName].dockingStationInformation.name;
+         latitude = dockingStations[stationName].dockingStationInformation.latitude;
+         longitude = dockingStations[stationName].dockingStationInformation.longitude;
      }
 
+     /*====================Bicycle functions Section Start ====================*/
 
+     /**
+     @dev responsible for adding a new bicycle
+     @param bicycleId the unique identifer given to the bicycle
+     */
+     function registerNewBicycle(string memory bicycleId, string memory features, string memory dockingStation) public onlyAdmin returns(bool) {
+         require(!bicycles[bicycleId].active, "Bicycle already added");
+         require(dockingStations[dockingStation].active, "Docking station doesnt exist");
+         require(!dockingStations[dockingStation].availableBicycles[bicycleId].active, "Bicycle already docked");
+         bicycles[bicycleId].id = bicycleId;
+         bicycles[bicycleId].dockedAt = dockingStation;
+         bicycles[bicycleId].userCount = 0;
+         bicycles[bicycleId].active = true;
+         bicycles[bicycleId].isDocked = true;
+         bicycles[bicycleId].features = features;
+         bicycles[bicycleId].index = dockingStations[dockingStation].count;
+         bicycleKeys.push(bicycleId);
+         dockingStations[dockingStation].availableBicyclesKeys.push(bicycleId);
+         dockingStations[dockingStation].availableBicycles[bicycleId] = bicycles[bicycleId];
+         dockingStations[dockingStation].count++;
+         return true;
+     }
+
+     function getBicycle(string memory bicycleId) public view returns(string memory, string memory, string memory) {
+         require(msg.sender != address(0), "Invalid sender address");
+         require(bicycles[bicycleId].active, "Bicycle doesnt exist");
+         return (bicycles[bicycleId].id, bicycles[bicycleId].dockedAt, bicycles[bicycleId].features);
+     }
+
+     function rentBicycle(string memory studentNo, string memory bicycleId, string memory dockingStation) public returns(bool) {
+         require(msg.sender != address(0), "Invalid sender address");
+         require(Students[studentNo].active, "Student not reigistered");
+         require(dockingStations[dockingStation].active, "Docking station doesnt exist");
+         require(dockingStations[dockingStation].availableBicycles[bicycleId].isDocked, "Bicycle not docked");
+         require(dockingStations[dockingStation].availableBicycles[bicycleId].active, "Bicycle not registered");
+         require(Students[studentNo].credit >= rideCost, "Insufficient cost to borrow a bicycle");
+         Students[studentNo].credit.sub(rideCost);
+         dockingStations[dockingStation].availableBicycles[bicycleId].isDocked = false;
+         delete dockingStations[dockingStation].availableBicyclesKeys[bicycles[bicycleId].index];
+         delete dockingStations[dockingStation].availableBicycles[bicycleId];
+         dockingStations[dockingStation].availableBicyclesKeys.length--;
+         bicycles[bicycleId].userHistory.push(studentNo);
+         bicycles[bicycleId].isDocked = false;
+         return true;
+     }
+
+     function dockBicycle(string memory studentNo, string memory bicycleId, string memory dockingStation) public returns(bool) {
+         require(msg.sender != address(0), "Invalid sender address");
+         require(Students[studentNo].active, "Student not registered");
+         require(bicycles[bicycleId].active, "Bicycle not registered");
+         require(!bicycles[bicycleId].isDocked, "Bicycle already docked");
+         require(dockingStations[dockingStation].active, "Docking station doesnt exist");
+         bicycles[bicycleId].userHistory.push(studentNo);
+         dockingStations[dockingStation].availableBicyclesKeys.push(bicycleId);
+         bicycles[bicycleId].isDocked = true;
+         bicycles[bicycleId].dockedAt = dockingStation;
+         dockingStations[dockingStation].availableBicycles[bicycleId] = bicycles[bicycleId];
+         return true;
+     }
+
+     function bicycleDocked(string memory bicycleId) public view returns(bool) {
+         require(msg.sender != address(0), "Invalid sender address");
+         require(bicycles[bicycleId].active, "Bicycle not registered");
+         return bicycles[bicycleId].isDocked;
+     }
  }

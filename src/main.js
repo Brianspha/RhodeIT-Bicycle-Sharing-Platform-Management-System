@@ -6,8 +6,6 @@ import VueAsyncData from "vue-async-data";
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import VueRecyclerviewNew from 'vue-recyclerview'
 import infiniteScroll from 'vue-infinite-scroll'
-import 'vue-googlemaps/dist/vue-googlemaps.css'
-import VueGoogleMaps from 'vue-googlemaps'
 import { Icon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 delete Icon.Default.prototype._getIconUrl;

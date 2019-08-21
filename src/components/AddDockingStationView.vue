@@ -224,7 +224,7 @@
             init() {
                 EmbarkJS.onReady((err) => {
                     //console.log(err)
-                    this.RhodeITSmartContract = require('../../embarkArtifacts/contracts/RhodeIT').default
+                    this.RhodeITSmartContract = require('../../embarkArtifacts/contracts/RhodeIT')
                     this.Web3 = EmbarkJS
                     //console.log(this.RhodeITSmartContract)
                 })
