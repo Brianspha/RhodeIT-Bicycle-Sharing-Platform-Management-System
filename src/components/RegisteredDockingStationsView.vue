@@ -119,7 +119,7 @@
                 let This = this
                 EmbarkJS.onReady((err) => {
                     console.log("error from connection: ", err)
-                    this.RhodeITContract = require('../../embarkArtifacts/contracts/RhodeIT').default
+                    this.RhodeITContract = require('../../embarkArtifacts/contracts/RhodeIT')
 
                     this.RhodeITContract.methods.getRegisteredDockingStationKeys().call({
                         gas: 8000000
