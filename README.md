@@ -8,12 +8,12 @@ To add
 
 ## App Screenshots
 1. Docking Stations View <br />
-![Alt text](/screenshots/1.png)
+![Alt text](/screenshots/1.PNG)
 <br />
-![Alt text](/screenshots/2.png)
+![Alt text](/screenshots/2.PNG)
 
 Assuming you dont embark and vue installed globally if not please install embark using the following commands if you already do skip to [link] (#ps)
-### Installing embark and vue cli
+### Installing EmbarkJS and Vue Cli Globally
 1. ``npm install --global windows-build-tools`` 
 2. ``npm install -g git``
 3. ``npm install node-gyp``
@@ -53,3 +53,12 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ```
 embark run RChain --nodashboard
 ```
+
+### To run embark locally
+``` embark run --nodashboard```
+
+Ensure you have geth installed before running the above command if you dont have geth you can run the following command
+
+``` embark simulator```
+
+enure your in the same directory as the project
