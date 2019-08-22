@@ -120,7 +120,6 @@
                 EmbarkJS.onReady((err) => {
                     console.log("error from connection: ", err)
                     this.RhodeITContract = require('../../embarkArtifacts/contracts/RhodeIT')
-
                     this.RhodeITContract.methods.getRegisteredDockingStationKeys().call({
                         gas: 8000000
                     }).then((keys, err) => {
@@ -130,7 +129,7 @@
                                 this.venueLocations.map((venue) => {
                                     if (key === venue.name) {
                                         venue.isRegistered = "Yes"
-                                    } else {
+                                    } else if(venue.isRegistered !== "Yes") {
                                         venue.isRegistered = "No"
                                     }
                                     return venue
