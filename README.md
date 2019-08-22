@@ -14,21 +14,11 @@ To add
 
 Assuming you dont embark and vue installed globally if not please install embark using the following commands if you already do skip to [link] (#ps)
 ### Installing embark and vue cli
-1. ```
-npm install --global windows-build-tools
-    ``` 
-2. ```
-npm install -g git
-    ```
-3. ```
-npm install node-gyp
-    ```
-4. ```
-npm install -g embark
-    ```
-5.   ```
- npm install -g @vue/cli
-    ```
+1. ``npm install --global windows-build-tools`` 
+2. ``npm install -g git``
+3. ``npm install node-gyp``
+4. ``npm install -g embark``
+5.   ``npm install -g @vue/cli``
 
 ## <a name="ps"></a> Project setup 
 ```
