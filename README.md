@@ -10,7 +10,9 @@ To add
 1. Docking Stations View <br />
 ![Alt text](/screenshots/1.PNG)
 <br />
-![Alt text](/screenshots/2.PNG)
+2. Detailed Stations View 
+    <br />
+    ![Alt text](/screenshots/2.PNG)
 
 Assuming you dont embark and vue installed globally if not please install embark using the following commands if you already do skip to [link] (#ps)
 ### Installing EmbarkJS and Vue Cli Globally
