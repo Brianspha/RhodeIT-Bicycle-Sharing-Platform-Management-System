@@ -9,7 +9,6 @@ To add
 ## App Screenshots
 1. Docking Stations View <br />
 ![Alt text](/screenshots/1.PNG)
-<br />
 2. Detailed Stations View 
     <br />
     ![Alt text](/screenshots/2.PNG)
