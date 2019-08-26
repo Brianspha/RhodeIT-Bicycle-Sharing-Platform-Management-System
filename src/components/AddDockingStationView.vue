@@ -60,6 +60,7 @@
     </v-app>
 </template>
 <script>
+    import each from 'each'
     import Loading from 'vue-loading-overlay';
     import 'vue-loading-overlay/dist/vue-loading.css';
     import InfiniteLoading from 'vue-infinite-loading';
@@ -114,107 +115,13 @@
                 venueLocations: [],
                 dialog: null,
                 zoom: 8,
-                Web3: null
+                Web3: null,
+                loaded: false
             }
         },
         watch: {
-            venueLocations: function () {
-                let This = this
-                //console.log('This.Rhode', This.RhodeITSmartContract)
-                if (This.RhodeITSmartContract) {
-                    This.RhodeITSmartContract.methods.getRegisteredDockingStationKeys().call({
-                        gas: 8000000
-                    }).then((keys, err) => {
-                        if (err) {
-                            This.error("Something went wrong: ", err)
-                            //console.log("err: ", err)
-                        } else {
-                            if (keys.length > 0) {
-                                keys.forEach(key => {
-                                    This.RhodeITSmartContract.methods.getDockingStation(key).call({
-                                        gas: 8000000
-                                    }).then((station, err) => {
-                                        if (err) {
-                                            This.error("Something went wrong: ", err)
-                                            //console.log("err: ", err)
-                                        } else {
-                                            var name = station.name
-                                            var lat = station.latitude
-                                            var long = station.longitude
-                                            This.venueLocations = This.venueLocations.map((
-                                                venue) => {
-                                                //console.log(venue.name)
-                                               // console.log("!keys.includes(veneu.name)",!keys.includes(venue.name))
-                                                if (venue.name === name) {
-                                                    venue.isRegistered = "Yes"
-                                                } else if(!keys.includes(venue.name)) {
-                                                    venue.isRegistered = "No"
-                                                }
-                                                return venue
-                                            })
-                                        }
-                                    }).catch((err) => {
-                                        //console.log(err)
-                                    })
-                                });
-                            } else {
-                                This.venueLocations.map((venue) => {
-                                    venue.isRegistered = "No"
-                                    return venue
-                                })
-                            }
-                        }
-                    }).catch((err) => {
-                        This.error("Something went wrong: ", err)
-                        //console.log("err: ", err)
-                    })
-                }
-            },
             RhodeITSmartContract: async function () {
-                let This = this
-                this.RhodeITSmartContract.methods.getRegisteredDockingStationKeys().call({
-                    gas: 8000000
-                }).then((keys, err) => {
-                    if (err) {
-                        This.error("Something went wrong: ", err)
-                        //console.log("err: ", err)
-                    } else {
-                        if (keys.length > 0) {
-                            console.log("Keys: ", keys)
-                            keys.forEach(key => {
-                                This.RhodeITSmartContract.methods.getDockingStation(key).call({
-                                    gas: 8000000
-                                }).then((station, err) => {
-                                    if (err) {
-                                        This.error("Something went wrong: ", err)
-                                        //console.log("err: ", err)
-                                    } else {
-                                        var name = station.name
-                                        var lat = station.latitude
-                                        var long = station.longitude
-                                        This.venueLocations = This.venueLocations.map((
-                                            venue) => {
-                                            if (venue.name === name) {
-                                                venue.isRegistered = "Yes"
-                                            }
-                                            return venue
-                                        })
-                                    }
-                                }).catch((err) => {
-                                    //console.log(err)
-                                })
-                            });
-                        } else {
-                            this.venueLocations.map((venue) => {
-                                venue.isRegistered = "No"
-                                return venue
-                            })
-                        }
-                    }
-                }).catch((err) => {
-                    this.error("Something went wrong: ", err)
-                    //console.log("err: ", err)
-                })
+
             }
         },
         mounted() {
@@ -223,17 +130,63 @@
         methods: {
             init() {
                 EmbarkJS.onReady((err) => {
-                    //console.log(err)
-                    this.RhodeITSmartContract = require('../../embarkArtifacts/contracts/RhodeIT')
+                    this.loadContract()
                     this.Web3 = EmbarkJS
-                    //console.log(this.RhodeITSmartContract)
                 })
+            },
+            loadContract() {
+                this.RhodeITSmartContract = require('../../embarkArtifacts/contracts/RhodeIT')
+                this.loadVenuesFromSmartContract()
+            },
+            loadVenuesFromSmartContract: async function () {
+                let This = this
+                this.isLoading = false
+                var keys = await this.RhodeITSmartContract.methods.getRegisteredDockingStationKeys().call({
+                    gas: 8000000
+                })
+                if (!keys) {
+                    this.error("Something went wrong: ", err)
+                    //console.log("err: ", err)
+                } else {
+                    if (keys.length > 0) {
+                        console.log("Keys: ", keys)
+                        keys.forEach(async function (key) {
+                            var station = await This.RhodeITSmartContract.methods.getDockingStation(key)
+                                .call({
+                                    gas: 8000000
+                                })
+                            if (!station) {
+                                This.error("Something went wrong: ", err)
+                                //console.log("err: ", err)
+                            } else {
+                                var name = station.name
+                                var lat = station.latitude
+                                var long = station.longitude
+                                var tempLocations = []
+                                This.venueLocations.map((venue) => {
+                                    if (venue.name === name) {
+                                        venue.isRegistered = "Yes"
+                                    } else if (venue.isRegistered !== "Yes") {
+                                        venue.isRegistered = "No"
+                                    }
+                                    return venue
+                                })
+                            }
+                        });
+                    } else {
+                        this.venueLocations.map((venue) => {
+                            venue.isRegistered = "No"
+                            return venue
+                        })
+                    }
+                }
             },
             loadvenueLocations($state) {
                 var venues = require('../json/venues.json')
+                this.venueLocations = []
                 //console.log(venues)
                 let This = this
-                venues.forEach((venue)=> {
+                venues.forEach((venue) => {
                     this.venueLocations.push({
                         name: venue.properties.name,
                         description: venue.properties.desc,
@@ -247,6 +200,7 @@
                     $state.loaded()
                 })
                 $state.complete()
+                this.loaded = true
             },
             getVenueDetails(index) {
                 //console.log(this.venueLocations[index])
@@ -256,23 +210,20 @@
                 this.isLoading = true
                 let This = this
                 //console.log(this.selectedVenue)
-                this.RhodeITSmartContract.methods.registerDockingStation(this.selectedVenue.name, this
+                var receipt = await this.RhodeITSmartContract.methods.registerDockingStation(this.selectedVenue
+                    .name, this
                     .selectedVenue.position.lat.toString(), this.selectedVenue.position.lng.toString()).send({
                     gas: 8000000
-                }).then((
-                    receipt, err) => {
-                    if (err) {
-                        This.error("Something went wrong: ", err)
-                        //console.log("err: ", err)
-                    } else {
-                        This.success("Successfully Registered Docking Station")
-                    }
-                    This.isLoading = false
-                }).catch((err) => {
+                })
+
+                if (!receipt) {
                     This.error("Something went wrong: ", err)
                     //console.log("err: ", err)
-                    This.isLoading = false
-                })
+                } else {
+                    This.success("Successfully Registered Docking Station")
+                    This.loadContract();
+                }
+                This.isLoading = false
             },
             removeDockingStation: async function () {
                 this.error("Seems the function hasnt been implemented as yet!!")

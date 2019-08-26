@@ -115,43 +115,39 @@
             })
         },
         methods: {
-            initMap() {
+            initMap: async function () {
                 let This = this
-                EmbarkJS.onReady((err) => {
+                EmbarkJS.onReady(async (err) => {
                     console.log("error from connection: ", err)
                     this.RhodeITContract = require('../../embarkArtifacts/contracts/RhodeIT')
-                    this.RhodeITContract.methods.getRegisteredDockingStationKeys().call({
-                        gas: 8000000
-                    }).then((keys, err) => {
-
-                        if (keys.length > 0) {
-                            keys.map((key) => {
-                                this.venueLocations.map((venue) => {
-                                    if (key === venue.name) {
-                                        venue.isRegistered = "Yes"
-                                    } else if(venue.isRegistered !== "Yes") {
-                                        venue.isRegistered = "No"
-                                    }
-                                    return venue
-                                })
-                            })
-                        } else {
-                            This.venueLocations.map((venue) => {
-                                venue.isRegistered = "No"
+                    console.log(this.RhodeITContract)
+                    var keys = await this.RhodeITContract.methods.getRegisteredDockingStationKeys()
+                        .call({
+                            gas: 8000000
+                        })
+                    console.log(keys)
+                    if (keys.length > 0) {
+                        keys.map((key) => {
+                            this.venueLocations.map((venue) => {
+                                if (key === venue.name) {
+                                    venue.isRegistered = "Yes"
+                                } else if (venue.isRegistered !== "Yes") {
+                                    venue.isRegistered = "No"
+                                }
                                 return venue
                             })
-                        }
-                    })
-
+                        })
+                    } else {
+                        This.venueLocations.map((venue) => {
+                            venue.isRegistered = "No"
+                            return venue
+                        })
+                    }
                 })
-
-
-                // this.$refs.map.addLayer(markerClusters)
             },
         }
     }
 </script>
-
 <style scoped>
     @import "~leaflet/dist/leaflet.css";
     @import "~leaflet.markercluster/dist/MarkerCluster.css";

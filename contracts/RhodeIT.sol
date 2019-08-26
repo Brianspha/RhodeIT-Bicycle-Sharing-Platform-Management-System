@@ -153,9 +153,7 @@
       * @return if exist or not
       *
       */
-     function userExists(string memory studentNo) public returns(bool) {
-         require(msg.sender != address(0), "Invalid sender address in function getUser");
-         emit userExistsLogger(studentNo, Students[studentNo].active);
+     function userExists(string memory studentNo) public view returns(bool) {
          return Students[studentNo].active;
      }
 

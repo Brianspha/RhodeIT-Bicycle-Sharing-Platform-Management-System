@@ -288,6 +288,14 @@
       "0x238344aeb4c19edba71936a6ec72fcd19ff733199819c10cd051b692e1e5fa6d": {
         "name": "RhodeIT",
         "address": "0xe71Ef51Bf0aC9948e49152D1679BB80b6bD013D1"
+      },
+      "0x1c2fcf35ba855ba82afde9ae9d9238e33fb0046ac83971ef4df9177a8b615fc3": {
+        "name": "RhodeIT",
+        "address": "0x70C1F4bdDa7015E86C11fd06713C419aBc5E67d1"
+      },
+      "0x7403b5e4525077fff52949d1eb1c80c7725865b888d6d3c71c812f0e29e37bca": {
+        "name": "RhodeIT",
+        "address": "0x628B88e343F41d73525BbAA38CA12e731263b932"
       }
     }
   }
