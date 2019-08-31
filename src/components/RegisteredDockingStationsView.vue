@@ -9,7 +9,7 @@
                         <v-spacer></v-spacer>
                     </v-toolbar>
 
-                    <v-map :zoom=10 :center="center">
+                    <v-map :zoom=10 :center="center" style="z-index:1">
                         <v-icondefault></v-icondefault>
                         <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
                         <v-marker-cluster :options="clusterOptions" @clusterclick="click()">

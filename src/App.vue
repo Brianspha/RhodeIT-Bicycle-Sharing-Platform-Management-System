@@ -21,7 +21,7 @@
                 </v-list-tile-content>
               </v-list-tile>
             </template>
-            <v-list-tile v-for="(child, i) in item.children" :key="i">
+            <v-list-tile v-for="(child, i) in item.children" :key="i" :ripple="{ center: true }">
               <v-list-tile-action v-if="child.render &&child.icon" :to="child.to">
                 <v-icon>{{ child.icon }}</v-icon>
               </v-list-tile-action>
@@ -32,12 +32,12 @@
               </v-list-tile-content>
             </v-list-tile>
           </v-list-group>
-          <v-list-tile :to="item.to" v-else :key="item.text">
+          <v-list-tile :to="item.to" v-else :key="item.text" :ripple="{ center: true }">
             <v-list-tile-action v-if="item.render">
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title v-if="item.render">
+              <v-list-tile-title v-if="item.render" :ripple="{ center: true }">
                 {{ item.text }}
               </v-list-tile-title>
             </v-list-tile-content>
@@ -99,19 +99,25 @@
         {
           icon: 'edit',
           text: 'Register New Bicycle',
-          to: "/RegisterBicycleView",
+          to: "/AddBicycle",
           render: true
         },
         {
           icon: 'collections',
           text: 'View Registered Bicycles',
-          to: "/ViewRegisteredBicyclesView",
+          to: "/RegisteredBicycles",
           render: true
         },
         {
           icon: 'person',
           text: 'View Registered Users',
-          to: "/RegisteredUsersView",
+          to: "/RegisteredUsers",
+          render: true
+        },
+        {
+          icon: 'compare_arrows',
+          text: 'Update Contract',
+          to: "/UpdateContract",
           render: true
         }
       ],
@@ -129,7 +135,7 @@
           location.reload()
         })
         window.ethereum.on('networkChanged', function (netId) {
-         location.reload()
+          location.reload()
         })
         window.ethereum.on('networkChanged', function (netId) {
           location.reload()

@@ -5,17 +5,14 @@
                 <v-flex>
                     <v-card>
                         <v-toolbar color="#7EC0EE" dark>
-                            <v-toolbar-title>Register Bicycle</v-toolbar-title>
+                            <v-toolbar-title>Update Contract</v-toolbar-title>
                             <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-form ref="form" v-model="valid" lazy-validation>
-                            <v-text-field v-model="dockingStation" :counter="42" :rules="dockingStationRule"
-                                label="Address " required hint="e.g. 0xe9CeDE851acf8e63bb359bd4b505b47b8777C419">
-                            </v-text-field>
-                            <v-text-field v-model="bikeId" label="BikeID " disabled>
-                            </v-text-field>
-                            <v-btn color="#7EC0EE" @click="validate">
-                                Register
+                            <v-text-field v-model="address" :counter="42" :rules="addressRules" label="Address " required
+                                hint="e.g. 0xe9CeDE851acf8e63bb359bd4b505b47b8777C419"></v-text-field>
+                            <v-btn color="#7EC0EE" @click="resetValidation">
+                                Update
                             </v-btn>
                         </v-form>
                     </v-card>
@@ -25,33 +22,29 @@
     </v-app>
 </template>
 <script>
-    import crypto from 'crypto'
     export default {
         data: () => ({
             valid: true,
-            dockingStation: '',
-            dockingStationRule: [
+            address: '',
+            addressRules: [
                 v => !!v || 'Name is required',
                 v => (v && v.length === 42 && web3.utils.isAddress(v)) ||
                 'Contract address must be 42 characters long and must be valid',
-            ],
-            bikeId: crypto.randomBytes(16).toString("hex")
+            ]
         }),
 
         methods: {
             validate() {
                 if (this.$refs.form.validate()) {
                     this.snackbar = true
-                     alert("valid")
-                    this.registerBicycle()
-                } else {
-                   alert("not valid")
                 }
-
             },
-            registerBicycle: async function () {
-                console.log("adding new bicycle")
-            }
+            reset() {
+                this.$refs.form.reset()
+            },
+            resetValidation() {
+                this.$refs.form.resetValidation()
+            },
         },
     }
 </script>

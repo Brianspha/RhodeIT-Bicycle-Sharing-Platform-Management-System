@@ -93,6 +93,7 @@
       * @dev stores all registered students on platform
       */
      mapping(string => Student) Students;
+     string[] registeredStudentsKeys;
      /**
       *@dev stores all registed docking DockingStations on the platform
       */
@@ -101,11 +102,9 @@
      /**
       * @dev keeps track of the total no of registered DockingStations
       */
-     uint256 countDockingStations = 0;
      /**
       * @dev keeps track of the total no of registered students
       */
-     uint256 countStudents;
 
      /**
       *@dev represents the owner of the platform
@@ -143,9 +142,10 @@
          require(!Students[studentNo].active, "Student already registered");
          Students[studentNo].studentNo = studentNo;
          Students[studentNo].active = true;
-         emit addUserLogger(true);
+         registeredStudentsKeys.push(studentNo);
          return true;
      }
+
 
      /**
       * @dev responsible for checking if a particular user exists
@@ -169,6 +169,10 @@
          require(msg.sender != address(0), "Invalid sender address in updateCredit function");
          require(Students[studentNo].active, "Student not registered");
          return Students[studentNo].credit;
+     }
+
+     function getAllRegisteredUserKeys() onlyAdmin public view returns(string[] memory) {
+         return registeredStudentsKeys;
      }
 
      /*====================Docking Station functions Section Start ====================*/

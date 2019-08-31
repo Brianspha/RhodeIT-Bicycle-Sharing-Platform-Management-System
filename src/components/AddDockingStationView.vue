@@ -20,14 +20,15 @@
                     </v-card>
                 </v-dialog>
                 <v-flex>
-                    <v-card class="elevation-12">
+                    <v-card>
                         <v-toolbar color="#7EC0EE" dark>
                             <v-toolbar-title>Docking Stations</v-toolbar-title>
                             <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-list two-line v-if="venueLocations.length>0">
-                            <template v-for="(venue, index) in venueLocations">
-                                <v-list-tile :key="index+new Date().getTime()" avatar ripple>
+                            <v-card v-for="(venue, index) in venueLocations" :ripple="{ center: true }"
+                                :key="new Date().getMilliseconds()+index">
+                                <v-list-tile :key="index+new Date().getTime()" avatar>
                                     <v-list-tile-content>
                                         <v-list-tile-title>Name: {{ (venue.name) }}
                                         </v-list-tile-title>
@@ -36,19 +37,31 @@
                                         <v-list-tile-sub-title>Description: {{ venue.description }}
                                         </v-list-tile-sub-title>
                                     </v-list-tile-content>
-                                    <v-btn icon x-smal ripple>
-                                        <v-icon color="grey lighten-1"
-                                            @click="selectedVenue=venue; registerDockingStation()">check_circle_outline
-                                        </v-icon>
-                                    </v-btn>
-                                    <v-btn icon x-smal ripple>
-                                        <v-icon color="grey lighten-1"
-                                            @click="selectedVenue=venue;removeDockingStation()">
-                                            remove_circle_outline</v-icon>
-                                    </v-btn>
+                                    <v-tooltip top>
+                                        <template v-slot:activator="{ on }">
+                                            <v-btn icon x-smal :ripple="{ center: true }">
+                                                <v-icon color="grey lighten-1"
+                                                    @click="selectedVenue=venue; registerDockingStation()" v-on="on">
+                                                    check_circle_outline
+                                                </v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Register Docking Station</span>
+                                    </v-tooltip>
+                                    <v-tooltip top>
+                                        <template v-slot:activator="{ on }">
+                                            <v-btn icon x-smal :ripple="{ center: true }">
+                                                <v-icon color="grey lighten-1"
+                                                    @click="selectedVenue=venue;removeDockingStation()" v-on="on">
+                                                    remove_circle_outline</v-icon>
+                                            </v-btn>
+                                        </template>
+                                        <span>Remove Docking Station</span>
+                                    </v-tooltip>
+
                                 </v-list-tile>
                                 <v-divider v-if="index + 1 < venueLocations.length" :key="index"></v-divider>
-                            </template>
+                            </v-card>
                         </v-list>
                         <InfiniteLoading @infinite="loadvenueLocations" spinner="waveDots"></InfiniteLoading>
                         <loading :active.sync="isLoading" :can-cancel="false" :is-full-page="fullPage">
@@ -72,9 +85,6 @@
     } from 'vuex'
     import EmbarkJS from '../../embarkArtifacts/embarkjs';
     import Swal from 'sweetalert2'
-    import {
-        async
-    } from 'q';
 
     // Those Vue props will update automatically
     // (Two-way binding with .sync modifier)
@@ -141,45 +151,51 @@
             loadVenuesFromSmartContract: async function () {
                 let This = this
                 this.isLoading = false
-                var keys = await this.RhodeITSmartContract.methods.getRegisteredDockingStationKeys().call({
+                this.RhodeITSmartContract.methods.getRegisteredDockingStationKeys().call({
                     gas: 8000000
-                })
-                if (!keys) {
-                    this.error("Something went wrong: ", err)
-                    //console.log("err: ", err)
-                } else {
-                    if (keys.length > 0) {
-                        console.log("Keys: ", keys)
-                        keys.forEach(async function (key) {
-                            var station = await This.RhodeITSmartContract.methods.getDockingStation(key)
-                                .call({
-                                    gas: 8000000
-                                })
-                            if (!station) {
-                                This.error("Something went wrong: ", err)
-                                //console.log("err: ", err)
-                            } else {
-                                var name = station.name
-                                var lat = station.latitude
-                                var long = station.longitude
-                                var tempLocations = []
-                                This.venueLocations.map((venue) => {
-                                    if (venue.name === name) {
-                                        venue.isRegistered = "Yes"
-                                    } else if (venue.isRegistered !== "Yes") {
-                                        venue.isRegistered = "No"
-                                    }
-                                    return venue
-                                })
-                            }
-                        });
+                }).then((keys, err) => {
+                    if (!keys) {
+                        this.error("Something went wrong: ", err)
+                        //console.log("err: ", err)
                     } else {
-                        this.venueLocations.map((venue) => {
-                            venue.isRegistered = "No"
-                            return venue
-                        })
+                        if (keys.length > 0) {
+                            console.log("Keys: ", keys)
+                            keys.forEach(async function (key) {
+                                var station = await This.RhodeITSmartContract.methods
+                                    .getDockingStation(key)
+                                    .call({
+                                        gas: 8000000
+                                    })
+                                if (!station) {
+                                    This.error("Something went wrong: ", err)
+                                    //console.log("err: ", err)
+                                } else {
+                                    var name = station.name
+                                    var lat = station.latitude
+                                    var long = station.longitude
+                                    var tempLocations = []
+                                    This.venueLocations.map((venue) => {
+                                        if (venue.name === name) {
+                                            venue.isRegistered = "Yes"
+                                        } else if (venue.isRegistered !== "Yes") {
+                                            venue.isRegistered = "No"
+                                        }
+                                        return venue
+                                    })
+                                }
+                            });
+                        } else {
+                            this.venueLocations.map((venue) => {
+                                venue.isRegistered = "No"
+                                return venue
+                            })
+                        }
                     }
-                }
+                }).catch((err) => {
+                    console.log(err)
+                    this.error("Something went wrong: ", err)
+                })
+
             },
             loadvenueLocations($state) {
                 var venues = require('../json/venues.json')
@@ -243,7 +259,7 @@
             error(message) {
                 Swal.fire({
                     type: 'error',
-                    title: 'And i-oop...',
+                    title: 'Error',
                     text: message,
                     allowOutsideClick: true
                 })
