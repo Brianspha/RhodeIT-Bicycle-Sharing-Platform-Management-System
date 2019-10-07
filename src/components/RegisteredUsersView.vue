@@ -2,23 +2,7 @@
     <v-app id="inspire">
         <v-container align-start justify-start row fill-height>
             <v-layout>
-                <v-dialog v-model="dialog" persistent max-width="100%" align-start justify-center row fill-height>
-                    <v-card v-if="dialog">
-                        <v-card-title>
-                            <span class="headline">Venue on Campus</span>
-                        </v-card-title>
-                        <!-- Map -->
-                        <googlemaps-map ref="map" class="map" :center.sync="center" :zoom.sync="zoom">
-                            <!-- Marker -->
-                            <googlemaps-marker :title="selectedVenue.name" :draggable="false"
-                                :position="selectedVenue.position" />
-                        </googlemaps-map>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="#7EC0EE" flat="flat" @click="dialog = false">Close</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
+               
                 <v-flex>
                     <v-card>
                         <v-toolbar color="#7EC0EE" dark>
@@ -74,7 +58,9 @@
         data() {
             return {
                 Users: [],
-                RhodeITSmartContract: {}
+                RhodeITSmartContract: {},
+                fullPage:true,
+                isLoading:false
             }
         },
         mounted() {
@@ -84,14 +70,15 @@
             })
         },
         methods: {
-            loadAllRegisteredUsers: async function () {
-
+            loadAllRegisteredUsers: async function ($state) {
+                 $state.loaded()   
                 for (var i = 0; i < 5; i++) {
                     this.Users.push({
                         userID: "1231223123",
                         rideCreditBalance: i * 1000
                     })
                 }
+                $state.complete()
                 return
                 let This = this
                 this.RhodeITSmartContract.methods.getAllRegisteredUserKeys().call({

@@ -296,6 +296,66 @@
       "0x7403b5e4525077fff52949d1eb1c80c7725865b888d6d3c71c812f0e29e37bca": {
         "name": "RhodeIT",
         "address": "0x628B88e343F41d73525BbAA38CA12e731263b932"
+      },
+      "0xd46eabe98f2dc67890773d5e7b9224f672fbf349a1028385bf47aaa52f99c832": {
+        "name": "RhodeIT",
+        "address": "0x4aEF1451AfAdCA7A699032F56b77aA2C17aaE7a9"
+      },
+      "0x488eb0b2e0eaaf5e0c8b5161f5cdeda78102a01bcea266adb77a3b0e6d48ab8e": {
+        "name": "RhodeIT",
+        "address": "0x736228528BC961Ac54F5D2036B85924FDe4c6fF8"
+      },
+      "0xb9e26dc74bb74841cd59cc9d3d2420f641bced2930feef7d3f97cb34f1a6953c": {
+        "name": "RhodeIT",
+        "address": "0x0FBca8C2A6404A6AFF2D5bd96fcBb50eB140dAd0"
+      },
+      "0xedd7c2f6ae51235426894b57fa9f5bc49a6f5d63cbf3e054f0431eadecab3b60": {
+        "name": "RhodeIT",
+        "address": "0xC1A0aB389E0eeA6fBAAB7F7a195026e9aD5ab69a"
+      },
+      "0x30a4e2409fd285a5e9e029fdc750a0386b1eaf0423531f7a0de21eb3c23a2e82": {
+        "name": "RhodeIT",
+        "address": "0x5BD4eB21728FFeD49c48E657bf49BcB462433498"
+      },
+      "0x0f4670b8f3ed65ff8388342a5bdba7fc9090259512b0f5600fa6b23be5749329": {
+        "name": "RhodeIT",
+        "address": "0x7886e9058345B5d490a29744fe46c739aeeCc18A"
+      },
+      "0xa3cbc4c4c181725c941c84132db0c1a18632c1be3b16eadc1ee936fac0311667": {
+        "name": "RhodeIT",
+        "address": "0x7886e9058345B5d490a29744fe46c739aeeCc18A"
+      },
+      "0xc53205d40660cb20c54f855294265679eb3f15692468f622687a7a8ec9a3a2a9": {
+        "name": "RhodeIT",
+        "address": "0x85dC512D8CDc0a3A8256BaFAc64aC8a78Cf3Ba30"
+      },
+      "0xaf5dd2d9fba5bb25e1d045cf4fe71a0bbf71369f0781d48911536953be874b01": {
+        "name": "RhodeIT",
+        "address": "0x69f511c9DFe0ea1FC95A4871d2b1Ed2E1CFeFbf7"
+      }
+    }
+  },
+  "0x7da10d5e9259042d9d958e8ed3643c834d5109c134a683c4e4ce0b13cc7de725": {
+    "contracts": {
+      "0x5ce293d015d10b3c756cd8808befde9f36f869aed41de36babfd04f0f68ba237": {
+        "name": "SafeMath",
+        "address": "0x3E18A43765e2D29C68c893E3C981f4A3b850088C"
+      },
+      "0x5bb23b0756d8d7317758d8a05e57b4952e1a6b929175309ab78b989c086b3da3": {
+        "name": "RhodeIT",
+        "address": "0x390A09fffBD96b31c466321a1C6D89597A9542e7"
+      },
+      "0x488eb0b2e0eaaf5e0c8b5161f5cdeda78102a01bcea266adb77a3b0e6d48ab8e": {
+        "name": "RhodeIT",
+        "address": "0xc013ca469a685Cb0C0d34017e70cf09e972B468E"
+      },
+      "0xbcdb35e47f8f4ec8c0f6e022fdf8c0577e25a41e4c959eb7dbae1613ee54d541": {
+        "name": "RhodeIT",
+        "address": "0x97bd2b28622C0986490d7d0A3B21371BB637AbF5"
+      },
+      "0x35a34b5c17d3ffd8435c62edeb5899ac4e04cb2f86158c5154e0381b08b74cad": {
+        "name": "RhodeIT",
+        "address": "0x60B19f34b66906de684072c03d1f2e6fD94A2587"
       }
     }
   }

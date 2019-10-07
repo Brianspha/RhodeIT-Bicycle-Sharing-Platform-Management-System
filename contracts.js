@@ -1,10 +1,10 @@
 module.exports = {
-    RChain: {
+    chain: {
         deployment: {
-            protocol: "http",
-            type: "rpc",
-            host: "146.231.123.137",
-            port: "11000",
+            protocol: "ws",
+            type: "ws",
+            host: "localhost",
+            port: "12000",
         },
         gas: "8000000",
         contracts: {

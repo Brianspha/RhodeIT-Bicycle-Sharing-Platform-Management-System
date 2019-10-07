@@ -15,18 +15,21 @@
      for uint;
      /*====================*Struct section start ====================*/
      /**
-     * @dev represents a student
-     * @param studentNo represents a student registertation id
-     * @param studentNopassword represents a student no and password (hash) used as ID on the platform
-     * @param active used to check if a student exists on the system or not
-     @param credit represents how much credit the student has in they account
+     * @dev represents a user
+     @param id the unique eth account each user will identified by
+     * @param studentno_staff_no represents a user registertation id
+     * @param password represents a user no and password (hash) used as ID on the platform
+     * @param active used to check if a user exists on the system or not
+     @param credit represents how much credit the user has in they account
      */
-     struct Student {
-         string studentNo;
+     struct User {
+         address id;
+         string studentno_staff_no;
          uint credit;
          bool active;
          string[] usedBicycles;
      }
+     /*====================Events section start ====================*/
 
      event addUserLogger(bool indexed results);
      event userExistsLogger(string indexed tHash, bool indexed results);
@@ -38,13 +41,12 @@
      * @dev represents a bicycle to be used on the platform
      * @param id unique identification for the current instance of the Bicycle
      @param dockedAt indicates where the bicycle is currently docked or which dockign station its docked in
-     * @param userCount keeps track of the total no of students who hav used the bicycle used for iterating through
+     * @param userCount keeps track of the total no of Users who hav used the bicycle used for iterating through
      @UserHistory
-     * @param userHistory used to keep track of all students who have used the Bicycle
+     * @param userHistory used to keep track of all Users who have used the Bicycle
      * @param active indicates if instance exists or not
      @param isDocked indicates if the bicycle is docked or not
      @param index represents the index location of in the docking s
-     @param features the specifications of the bicycle
      */
      struct Bicycle {
          string id;
@@ -52,9 +54,8 @@
          uint256 userCount;
          bool active;
          bool isDocked;
-         string[] userHistory;
+         address[] userHistory;
          uint256 index;
-         string features;
      }
      /**
      * @dev represents a venue to be used as a DockingStation
@@ -90,10 +91,10 @@
 
      /*====================*Contract variable section start ====================*/
      /**
-      * @dev stores all registered students on platform
+      * @dev stores all registered Users on platform
       */
-     mapping(string => Student) Students;
-     string[] registeredStudentsKeys;
+     mapping(address => User) Users;
+     address[] registeredUsersKeys;
      /**
       *@dev stores all registed docking DockingStations on the platform
       */
@@ -103,7 +104,7 @@
       * @dev keeps track of the total no of registered DockingStations
       */
      /**
-      * @dev keeps track of the total no of registered students
+      * @dev keeps track of the total no of registered Users
       */
 
      /**
@@ -131,48 +132,50 @@
          admin = msg.sender;
      }
 
+     /*====================User Function Code section start ====================*/
+
 
      /**
-      *@dev responsible for adding a new student on the database
-      * @param studentNo represents the student identification no
+      *@dev responsible for adding a new User on the database
+      * @param studentno_staff_no represents the student/staff identification no
       * @notice empty variable checking is done outside of the blockchain
       */
-     function addUser(string memory studentNo) public returns(bool) {
+     function addUser(string memory studentno_staff_no) public returns(bool) {
          require(msg.sender != address(0), "Invalid sender address in addUser function");
-         require(!Students[studentNo].active, "Student already registered");
-         Students[studentNo].studentNo = studentNo;
-         Students[studentNo].active = true;
-         registeredStudentsKeys.push(studentNo);
+         require(!Users[msg.sender].active, "user already registered");
+         Users[msg.sender].studentno_staff_no = studentno_staff_no;
+         Users[msg.sender].active = true;
+         Users[msg.sender].id = msg.sender;
+         registeredUsersKeys.push(msg.sender);
          return true;
      }
 
 
      /**
       * @dev responsible for checking if a particular user exists
-      * @param studentNo studentNo to verify * @notice empty variable checking is done outside of the blockchain
       * @return if exist or not
       *
       */
-     function userExists(string memory studentNo) public view returns(bool) {
-         return Students[studentNo].active;
+     function userExists() public view returns(bool) {
+         return Users[msg.sender].active;
      }
 
-     function updateCredit(string memory studentNo, uint256 credit) public onlyAdmin returns(bool) {
+     function updateCredit(uint256 credit) public onlyAdmin returns(bool) {
          require(msg.sender != address(0), "Invalid sender address in updateCredit function");
-         require(Students[studentNo].active, "Student not registered");
+         require(Users[msg.sender].active, "user not registered");
          require(credit > 0, "new credit must be greater than 0");
-         Students[studentNo].credit = Students[studentNo].credit.add(credit);
+         Users[msg.sender].credit = Users[msg.sender].credit.add(credit);
          return true;
      }
 
-     function getUsercredit(string memory studentNo) public view returns(uint256) {
+     function getUsercredit() public view returns(uint256) {
          require(msg.sender != address(0), "Invalid sender address in updateCredit function");
-         require(Students[studentNo].active, "Student not registered");
-         return Students[studentNo].credit;
+         require(Users[msg.sender].active, "User not registered");
+         return Users[msg.sender].credit;
      }
 
-     function getAllRegisteredUserKeys() onlyAdmin public view returns(string[] memory) {
-         return registeredStudentsKeys;
+     function getAllRegisteredUserKeys() onlyAdmin public view returns(address[] memory) {
+         return registeredUsersKeys;
      }
 
      /*====================Docking Station functions Section Start ====================*/
@@ -226,7 +229,7 @@
      @dev responsible for adding a new bicycle
      @param bicycleId the unique identifer given to the bicycle
      */
-     function registerNewBicycle(string memory bicycleId, string memory features, string memory dockingStation) public onlyAdmin returns(bool) {
+     function registerNewBicycle(string memory bicycleId, string memory dockingStation) public onlyAdmin returns(bool) {
          require(!bicycles[bicycleId].active, "Bicycle already added");
          require(dockingStations[dockingStation].active, "Docking station doesnt exist");
          require(!dockingStations[dockingStation].availableBicycles[bicycleId].active, "Bicycle already docked");
@@ -235,7 +238,6 @@
          bicycles[bicycleId].userCount = 0;
          bicycles[bicycleId].active = true;
          bicycles[bicycleId].isDocked = true;
-         bicycles[bicycleId].features = features;
          bicycles[bicycleId].index = dockingStations[dockingStation].count;
          bicycleKeys.push(bicycleId);
          dockingStations[dockingStation].availableBicyclesKeys.push(bicycleId);
@@ -244,36 +246,40 @@
          return true;
      }
 
-     function getBicycle(string memory bicycleId) public view returns(string memory, string memory, string memory) {
+     function getBicycle(string memory bicycleId) public view returns(string memory) {
          require(msg.sender != address(0), "Invalid sender address");
          require(bicycles[bicycleId].active, "Bicycle doesnt exist");
-         return (bicycles[bicycleId].id, bicycles[bicycleId].dockedAt, bicycles[bicycleId].features);
+         return bicycles[bicycleId].dockedAt;
      }
 
-     function rentBicycle(string memory studentNo, string memory bicycleId, string memory dockingStation) public returns(bool) {
+     function getRegisteredBicycleKeys() public onlyAdmin view returns(string[] memory) {
+         return bicycleKeys;
+     }
+
+     function rentBicycle(string memory bicycleId, string memory dockingStation) public returns(bool) {
          require(msg.sender != address(0), "Invalid sender address");
-         require(Students[studentNo].active, "Student not reigistered");
+         require(Users[msg.sender].active, "user not reigistered");
          require(dockingStations[dockingStation].active, "Docking station doesnt exist");
          require(dockingStations[dockingStation].availableBicycles[bicycleId].isDocked, "Bicycle not docked");
          require(dockingStations[dockingStation].availableBicycles[bicycleId].active, "Bicycle not registered");
-         require(Students[studentNo].credit >= rideCost, "Insufficient cost to borrow a bicycle");
-         Students[studentNo].credit.sub(rideCost);
+         require(Users[msg.sender].credit >= rideCost, "Insufficient cost to borrow a bicycle");
+         Users[msg.sender].credit.sub(rideCost);
          dockingStations[dockingStation].availableBicycles[bicycleId].isDocked = false;
          delete dockingStations[dockingStation].availableBicyclesKeys[bicycles[bicycleId].index];
          delete dockingStations[dockingStation].availableBicycles[bicycleId];
          dockingStations[dockingStation].availableBicyclesKeys.length--;
-         bicycles[bicycleId].userHistory.push(studentNo);
+         bicycles[bicycleId].userHistory.push(msg.sender);
          bicycles[bicycleId].isDocked = false;
          return true;
      }
 
-     function dockBicycle(string memory studentNo, string memory bicycleId, string memory dockingStation) public returns(bool) {
+     function dockBicycle(string memory bicycleId, string memory dockingStation) public returns(bool) {
          require(msg.sender != address(0), "Invalid sender address");
-         require(Students[studentNo].active, "Student not registered");
+         require(Users[msg.sender].active, "user not registered");
          require(bicycles[bicycleId].active, "Bicycle not registered");
          require(!bicycles[bicycleId].isDocked, "Bicycle already docked");
          require(dockingStations[dockingStation].active, "Docking station doesnt exist");
-         bicycles[bicycleId].userHistory.push(studentNo);
+         bicycles[bicycleId].userHistory.push(msg.sender);
          dockingStations[dockingStation].availableBicyclesKeys.push(bicycleId);
          bicycles[bicycleId].isDocked = true;
          bicycles[bicycleId].dockedAt = dockingStation;

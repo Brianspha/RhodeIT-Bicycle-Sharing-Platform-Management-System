@@ -2,23 +2,6 @@
     <v-app id="inspire">
         <v-container align-start justify-start row fill-height>
             <v-layout>
-                <v-dialog v-model="dialog" persistent max-width="100%" align-start justify-center row fill-height>
-                    <v-card v-if="dialog">
-                        <v-card-title>
-                            <span class="headline">Venue on Campus</span>
-                        </v-card-title>
-                        <!-- Map -->
-                        <googlemaps-map ref="map" class="map" :center.sync="center" :zoom.sync="zoom">
-                            <!-- Marker -->
-                            <googlemaps-marker :title="selectedVenue.name" :draggable="false"
-                                :position="selectedVenue.position" />
-                        </googlemaps-map>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="#7EC0EE" flat="flat" @click="dialog = false">Close</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
                 <v-flex>
                     <v-card>
                         <v-toolbar color="#7EC0EE" dark>
@@ -140,12 +123,18 @@
         methods: {
             init() {
                 EmbarkJS.onReady((err) => {
+                    if(err){
+                    this.error('Seems like you dont have metamask installed!')
+                    }
+                    else{
                     this.loadContract()
                     this.Web3 = EmbarkJS
+                    }
                 })
             },
             loadContract() {
                 this.RhodeITSmartContract = require('../../embarkArtifacts/contracts/RhodeIT')
+                console.log(this.RhodeITSmartContract)
                 this.loadVenuesFromSmartContract()
             },
             loadVenuesFromSmartContract: async function () {
