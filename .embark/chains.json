@@ -331,7 +331,27 @@
       },
       "0xaf5dd2d9fba5bb25e1d045cf4fe71a0bbf71369f0781d48911536953be874b01": {
         "name": "RhodeIT",
-        "address": "0x69f511c9DFe0ea1FC95A4871d2b1Ed2E1CFeFbf7"
+        "address": "0x7a4137550410179e7393FA49AbD3731a6444c241"
+      },
+      "0x73d06471fafeb5902ff3a8cab21e832db74682b4ce9fe8305c0ad67db82a7fb3": {
+        "name": "RhodeIT",
+        "address": "0x509ABB15A06e99E3E2522f4644d2B37036F9b058"
+      },
+      "0x21ef6c84165a550b81a4d5db7df73d8711e9306975c7b1d7cfe85d5e87cdf5f1": {
+        "name": "RhodeIT",
+        "address": "0x31FcC686886DA1252Ec080F7bb9ABF6067610575"
+      },
+      "0x9a279570eb58074404f4eb3827cd748d1e83dccd8b6d2ba71bf4b0d1ef727267": {
+        "name": "RhodeIT",
+        "address": "0x683f2144d2F3Fc7C26Da6a50cBf17eE57Fd1AA85"
+      },
+      "0x7d54cbb602630333ad26f37eccf793ed39315e1af06ba92674bbf993adf0be03": {
+        "name": "RhodeIT",
+        "address": "0x871213dDCB0a077ae04FE87Faa1e91A8544F411F"
+      },
+      "0x0df212bc290bcdd23984b9ee198539609339427a40d22eddbdab0840bbfce293": {
+        "name": "RhodeIT",
+        "address": "0x4c056A25F36cE3E7300ea077155a3e5c049E46E8"
       }
     }
   },

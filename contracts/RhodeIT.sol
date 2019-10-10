@@ -114,7 +114,7 @@
      mapping(string => Bicycle) bicycles;
      string[] bicycleKeys;
      uint256 rideCost = 10;
-
+     uint256 rideCreditsBought;
      /*====================*modifiers section start ====================*/
 
      modifier onlyAdmin() {
@@ -160,11 +160,12 @@
          return Users[msg.sender].active;
      }
 
-     function updateCredit(uint256 credit) public onlyAdmin returns(bool) {
+     function updateCredit() public payable onlyAdmin returns(bool) {
          require(msg.sender != address(0), "Invalid sender address in updateCredit function");
          require(Users[msg.sender].active, "user not registered");
-         require(credit > 0, "new credit must be greater than 0");
-         Users[msg.sender].credit = Users[msg.sender].credit.add(credit);
+         require(msg.value > 0, "new credit must be greater than 0");
+         Users[msg.sender].credit = Users[msg.sender].credit.add(msg.value);
+         rideCreditsBought = rideCreditsBought.add(msg.value);
          return true;
      }
 
