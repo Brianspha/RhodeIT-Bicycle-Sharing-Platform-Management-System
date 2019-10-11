@@ -9,9 +9,10 @@
                             <v-spacer></v-spacer>
                         </v-toolbar>
                         <v-form ref="form" v-model="valid" lazy-validation>
-                            <v-text-field v-model="dockingStation" :rules="dockingStationRule" label="Docked At "
-                                required hint="Hamilton">
-                            </v-text-field>
+                            <div>
+                                <h3>Docked At</h3>
+                                <v-select :options="dockingStations"></v-select>
+                            </div>
                             <v-text-field v-model="bikeId" label="BikeID " disabled>
                             </v-text-field>
                             <v-btn color="#7EC0EE" @click="validate">
@@ -35,10 +36,18 @@
                 v => (v && v.length > 0) ||
                 'Docking Station Name must be greater than 0 characters',
             ],
-            bikeId: crypto.randomBytes(16).toString("hex")
+            bikeId: crypto.randomBytes(16).toString("hex"),
+            dockingStations: [],
+            RhodeITConract: {}
         }),
-
+        mounted() {
+            this.init()
+            this.getDockingStations()
+        },
         methods: {
+            init() {
+                this.RhodeITConract = require("../../embarkArtifacts/contracts/RhodeIT")
+            },
             validate() {
                 if (this.$refs.form.validate()) {
                     this.snackbar = true
@@ -51,7 +60,15 @@
             },
             registerBicycle: async function () {
                 console.log("adding new bicycle")
+            },
+            getDockingStations: function async () {
+                var venues = require('../json/venues.json')
+                venues.forEach((venue) => {
+                    this.dockingStations.push(
+                        venue.properties.name
+                    )
+                })
             }
-        },
+        }
     }
 </script>

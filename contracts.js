@@ -1,10 +1,10 @@
 module.exports = {
     chain: {
         deployment: {
-            protocol: "ws",
-            type: "ws",
+            protocol: "http",
+            type: "rpc",
             host: "localhost",
-            port: "12000",
+            port: "11000",
         },
         gas: "8000000",
         contracts: {

@@ -33,16 +33,17 @@ contract("RhodeIT Deployment", (err) => {
         assert.strictEqual(exists, true)
     })
     it('Should update a students credit', async () => {
-        let receipt = await RhodeITContract.methods.updateCredit(200).send({
-            gas: 8000000
+        let receipt = await RhodeITContract.methods.updateCredit().send({
+            gas: 8000000,
+            value: web3.utils.toWei('10', 'ether')
         })
     })
     it('Should get the students current ride credits', async () => {
         let balance = await RhodeITContract.methods.getUsercredit().call({
             gas: 8000000
         })
-        console.log(`balance: ${balance}`)
-        assert.strictEqual(parseInt(balance) === 200, true)
+        console.log(`balance: ${balance/10**18}`)//@dev could use fromWei 
+        assert.strictEqual(parseInt(balance/10**18) === 10, true)
     })
 
     it('Should register a docking station', async () => {
@@ -71,13 +72,11 @@ contract("RhodeIT Deployment", (err) => {
         })
     })
     it('Should get a bicycles information', async () => {
-        let bicycleDetails = await RhodeITContract.methods.getBicycle("bicycle1").call({
+        let dockedAt = await RhodeITContract.methods.getBicycle("bicycle1").call({
             gas: 8000000
         })
-        var id = bicycleDetails[0],
-            dockedAt = bicycleDetails[1],
-        console.log(`id ${id} dockedAt ${dockedAt} `)
-        assert.strictEqual(id.toString() === "bicycle1", true)
+        console.log(`dockedAt ${dockedAt}`)
+        assert.strictEqual(dockedAt.toString() === "hamilton", true)
     })
     it('Should check if the specified bicycle is docked or not', async () => {
         let docked = await RhodeITContract.methods.bicycleDocked("bicycle1").call({

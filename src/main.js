@@ -8,6 +8,9 @@ import VueRecyclerviewNew from 'vue-recyclerview'
 import infiniteScroll from 'vue-infinite-scroll'
 import { Icon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
+
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -18,6 +21,7 @@ Vue.use(infiniteScroll)
 Vue.use(VueRecyclerviewNew)
 Vue.use(VueAsyncData)
 Vue.use(Vuetify)
+Vue.component('v-select', vSelect)
 new Vue({
   render: h => h(App),
   router: Router

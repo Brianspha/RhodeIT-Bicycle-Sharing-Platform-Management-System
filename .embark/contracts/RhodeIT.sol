@@ -93,13 +93,13 @@
      /**
       * @dev stores all registered Users on platform
       */
-     mapping(address => User) Users;
-     address[] registeredUsersKeys;
+     mapping(address => User) internal Users;
+     address[] internal registeredUsersKeys;
      /**
       *@dev stores all registed docking DockingStations on the platform
       */
-     mapping(string => DockingStation) dockingStations;
-     string[] dockingStationKeys;
+     mapping(string => DockingStation) internal dockingStations;
+     string[] internal dockingStationKeys;
      /**
       * @dev keeps track of the total no of registered DockingStations
       */
@@ -110,11 +110,11 @@
      /**
       *@dev represents the owner of the platform
       */
-     address admin;
-     mapping(string => Bicycle) bicycles;
-     string[] bicycleKeys;
-     uint256 rideCost = 10;
-     uint256 rideCreditsBought;
+     address internal admin;
+     mapping(string => Bicycle) internal bicycles;
+     string[] internal bicycleKeys;
+     uint256 internal rideCost = 10;
+     uint256 internal rideCreditsBought;
      /*====================*modifiers section start ====================*/
 
      modifier onlyAdmin() {
