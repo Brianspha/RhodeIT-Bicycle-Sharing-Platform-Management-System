@@ -71,21 +71,13 @@
         },
         methods: {
             loadAllRegisteredUsers: async function ($state) {
-                 $state.loaded()   
-                for (var i = 0; i < 5; i++) {
-                    this.Users.push({
-                        userID: "1231223123",
-                        rideCreditBalance: i * 1000
-                    })
-                }
-                $state.complete()
-                return
                 let This = this
                 this.RhodeITSmartContract.methods.getAllRegisteredUserKeys().call({
                     gas: 8000000
                 }).then((keys, err) => {
                     if (!err) {
                         console.log(keys)
+                        $state.loaded()   
                         keys.forEach((key) => {
                             This.RhodeITSmartContract.methods.getUserCredit(key).call({
                                 gas: 8000000
@@ -103,6 +95,7 @@
                     console.log(err)
                     This.error('Something went wrong whilst loading registered users')
                 })
+        $state.complete()
             },
             banUser: async function (userID) {
                 console.log(`Banning user ${userID}`)

@@ -55,6 +55,7 @@
          bool active;
          bool isDocked;
          address[] userHistory;
+         uint lastDateBorrowed;
          uint256 index;
      }
      /**
@@ -160,11 +161,12 @@
          return Users[msg.sender].active;
      }
 
-     function updateCredit() public payable onlyAdmin returns(bool) {
-         require(msg.sender != address(0), "Invalid sender address in updateCredit function");
-         require(Users[msg.sender].active, "user not registered");
+     function updateCredit(address receipient) public payable onlyAdmin returns(bool) {
+         require(receipient != address(0), "Invalid sender address in updateCredit function");
+         require(Users[receipient].active, "user not registered");
+         require(msg.sender != receipient, "cannot top up admin credits");
          require(msg.value > 0, "new credit must be greater than 0");
-         Users[msg.sender].credit = Users[msg.sender].credit.add(msg.value);
+         Users[receipient].credit = Users[receipient].credit.add(msg.value);
          rideCreditsBought = rideCreditsBought.add(msg.value);
          return true;
      }
@@ -247,10 +249,8 @@
          return true;
      }
 
-     function getBicycle(string memory bicycleId) public view returns(string memory) {
-         require(msg.sender != address(0), "Invalid sender address");
-         require(bicycles[bicycleId].active, "Bicycle doesnt exist");
-         return bicycles[bicycleId].dockedAt;
+     function getBicycle(string memory bicycleId) public view returns(string memory,bool) {
+         return (bicycles[bicycleId].dockedAt,bicycles[bicycleId].isDocked);
      }
 
      function getRegisteredBicycleKeys() public onlyAdmin view returns(string[] memory) {
@@ -269,8 +269,8 @@
          delete dockingStations[dockingStation].availableBicyclesKeys[bicycles[bicycleId].index];
          delete dockingStations[dockingStation].availableBicycles[bicycleId];
          dockingStations[dockingStation].availableBicyclesKeys.length--;
-         bicycles[bicycleId].userHistory.push(msg.sender);
          bicycles[bicycleId].isDocked = false;
+         bicycles[bicycleId].userHistory.push(msg.sender);
          return true;
      }
 
@@ -284,6 +284,7 @@
          dockingStations[dockingStation].availableBicyclesKeys.push(bicycleId);
          bicycles[bicycleId].isDocked = true;
          bicycles[bicycleId].dockedAt = dockingStation;
+         bicycles[bicycleId].lastDateBorrowed=now;
          dockingStations[dockingStation].availableBicycles[bicycleId] = bicycles[bicycleId];
          return true;
      }

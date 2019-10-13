@@ -11,7 +11,7 @@
                         <v-form ref="form" v-model="valid" lazy-validation>
                             <div>
                                 <h3>Docked At</h3>
-                                <v-select :options="dockingStations"></v-select>
+                                <v-select :options="dockingStations" v-model="dockingStation"></v-select>
                             </div>
                             <v-text-field v-model="bikeId" label="BikeID " disabled>
                             </v-text-field>
@@ -22,13 +22,22 @@
                     </v-card>
                 </v-flex>
             </v-layout>
+            <loading :active.sync="isLoading" :can-cancel="false" :is-full-page="true" />
         </v-container>
     </v-app>
 </template>
 <script>
     import crypto from 'crypto'
+    import InfiniteLoading from 'vue-infinite-loading';
+    import Swal from 'sweetalert2'
+    import Loading from 'vue-loading-overlay';
+    import 'vue-loading-overlay/dist/vue-loading.css';
     export default {
+        components: {
+            Loading
+        },
         data: () => ({
+            isLoading: false,
             valid: true,
             dockingStation: '',
             dockingStationRule: [
@@ -38,7 +47,7 @@
             ],
             bikeId: crypto.randomBytes(16).toString("hex"),
             dockingStations: [],
-            RhodeITConract: {}
+            rhodeITContract: {}
         }),
         mounted() {
             this.init()
@@ -46,28 +55,76 @@
         },
         methods: {
             init() {
-                this.RhodeITConract = require("../../embarkArtifacts/contracts/RhodeIT")
+                this.rhodeITContract = require("../../embarkArtifacts/contracts/RhodeIT")
             },
             validate() {
-                if (this.$refs.form.validate()) {
+                console.log('bicycle docked At: ', this.dockingStation)
+                if (this.$refs.form.validate() && this.dockingStation !== '') {
                     this.snackbar = true
-                    alert("valid")
+                    this.isLoading = true;
                     this.registerBicycle()
                 } else {
-                    alert("not valid")
+                    this.error("Invalid bicycle details!!")
                 }
-
             },
             registerBicycle: async function () {
-                console.log("adding new bicycle")
+                let This = this
+                this.rhodeITContract.methods.registerNewBicycle(this.bikeId, this.dockingStation).send({
+                    gas: 8000000
+                }).then((receipt, err) => {
+                    if (!err) {
+                        This.success("Succesfully registered new bicycle")
+                    }
+                    This.isLoading = false
+                }).catch((err) => {
+                    console.log("Error whilst adding new bicycle!!")
+                    console.log(err)
+                    This.error("Error whilst adding new bicycle!!")
+                    This.isLoading = false
+                })
             },
             getDockingStations: function async () {
                 var venues = require('../json/venues.json')
-                venues.forEach((venue) => {
-                    this.dockingStations.push(
-                        venue.properties.name
-                    )
+                this.isLoading = true
+                let This = this
+                this.rhodeITContract.methods.getRegisteredDockingStationKeys().call({
+                    gas: 8000000
+                }).then((keys, err) => {
+                    if (!err && keys.length > 0) {
+                        keys.forEach((key) => {
+                            venues.forEach((venue) => {
+                                console.log("venue: ",venue.properties.name)
+                                console.log("key: ",key)
+                                if (key === venue.properties.name) {
+                                    This.dockingStations.push(
+                                        venue.properties.name
+                                    )
+                                }
+                            })
+                        })
+                        This.isLoading = false
+                    }
+                }).catch((err) => {
+                    console.log("error getting registered docking stations")
+                    console.log(err)
+                    this.isLoading = false
                 })
+
+            },
+            error(message) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Error',
+                    text: message,
+                    allowOutsideClick: true
+                })
+            },
+            success(message) {
+                Swal.fire(
+                    'Success',
+                    message,
+                    'success'
+                )
             }
         }
     }

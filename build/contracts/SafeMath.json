@@ -26,13 +26,12 @@
   "originalFilename": "contracts\\SafeMath.sol",
   "path": "C:\\Users\\g14m1190\\Documents\\GitHub\\rhodeitmanagment\\contracts\\SafeMath.sol",
   "gas": "8000000",
-  "gasPrice": "200",
   "type": "file",
   "deploy": true,
   "_gasLimit": 6000000,
   "error": false,
   "deploymentAccount": "0xae3478f55aE21B9139652467D0B73177d6bEc204",
   "realArgs": [],
-  "deployedAddress": "0x51053AddEf4e5677D589311E7C3260d350F97C0C",
-  "transactionHash": "0xdba6e214e80a1ea193b98bb35147308987acd81d5c3a7d6305b85551e5faaf32"
+  "address": "0x7276CC61E800cB14A85cb0ae3288b9FdBde2d9eB",
+  "deployedAddress": "0x7276CC61E800cB14A85cb0ae3288b9FdBde2d9eB"
 }

@@ -20,3 +20,9 @@ yarn-error.log*
 *.sln
 *.sw?
 .embark/*
+.embark/chains.json
+.embark/contractLogs.json
+.embark/contracts/RhodeIT.sol
+.embark/contracts/SafeMath.sol
+.embark/versions/*
+build/*

@@ -2,7 +2,6 @@
     <v-app id="inspire">
         <v-container align-start justify-start row fill-height>
             <v-layout>
-
                 <v-flex>
                     <v-card>
                         <v-toolbar color="#7EC0EE" dark>
@@ -14,9 +13,11 @@
                                 :key="new Date().getMilliseconds()+index">
                                 <v-list-tile :key="index+new Date().getTime()" avatar>
                                     <v-list-tile-content>
-                                        <v-list-tile-title>UserID: {{ (bicycle.bikeID) }}
+                                        <v-list-tile-title>BikeID:  {{ (bicycle.bikeID) }}
                                         </v-list-tile-title>
-                                        <v-list-tile-title>RideCredit Balance: {{ (bicycle.dockedAt) }}
+                                        <v-list-tile-title>DockedAt:    {{ (bicycle.dockedAt) }}
+                                        </v-list-tile-title>
+                                        <v-list-tile-title>Available:   {{ (bicycle.available) }}
                                         </v-list-tile-title>
                                     </v-list-tile-content>
                                     <v-tooltip top>
@@ -30,7 +31,6 @@
                                         </template>
                                         <span>DeRegister</span>
                                     </v-tooltip>
-
                                 </v-list-tile>
                                 <v-divider v-if="index + 1 < bicycles.length" :key="index"></v-divider>
                             </v-card>
@@ -44,7 +44,6 @@
         </v-container>
     </v-app>
 </template>
-
 <script>
     import EmbarkJS from '../../embarkArtifacts/embarkjs';
     import Loading from 'vue-loading-overlay';
@@ -72,16 +71,8 @@
         },
         methods: {
             loadAllRegisteredBicycles: async function ($state) {
-                $state.loaded()
-                for (var i = 0; i < 5; i++) {
-                    this.bicycles.push({
-                        bikeID: "1231223123",
-                        dockedAt: "Hamilton"
-                    })
-                }
-                $state.complete()
-                return
                 let This = this
+                console.log(this.RhodeITSmartContract)
                 this.RhodeITSmartContract.methods.getRegisteredBicycleKeys().call({
                     gas: 8000000
                 }).then((keys, err) => {
@@ -92,13 +83,17 @@
                                 gas: 8000000
                             }).then((dockedAt, err) => {
                                 if (!err) {
+                                    $state.loaded()
                                     This.bicycles.push({
                                         bikeID: key,
-                                        dockedAt: dockedAt
+                                        dockedAt: dockedAt[0],
+                                        available: dockedAt[1] === true ?
+                                            "Available" : "Not Available"
                                     })
                                 }
                             })
                         })
+                        $state.complete()
                     }
                 }).catch((err) => {
                     console.log(err)
