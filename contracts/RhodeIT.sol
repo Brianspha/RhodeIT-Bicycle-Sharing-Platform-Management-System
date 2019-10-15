@@ -219,11 +219,10 @@
          return dockingStations[name].active;
      }
 
-     function getDockingStation(string memory stationName) public view returns(string memory name, string memory latitude, string memory longitude) {
+     function getDockingStation(string memory stationName) public view returns(string memory, string memory, string memory, uint256) {
          require(msg.sender != address(0), "Invalid sender address");
-         name = dockingStations[stationName].dockingStationInformation.name;
-         latitude = dockingStations[stationName].dockingStationInformation.latitude;
-         longitude = dockingStations[stationName].dockingStationInformation.longitude;
+         return (dockingStations[stationName].dockingStationInformation.name, dockingStations[stationName].dockingStationInformation.latitude, dockingStations[stationName].dockingStationInformation.longitude,
+             dockingStations[stationName].availableBicyclesKeys.length);
      }
 
      /*====================Bicycle functions Section Start ====================*/
@@ -249,8 +248,8 @@
          return true;
      }
 
-     function getBicycle(string memory bicycleId) public view returns(string memory,bool) {
-         return (bicycles[bicycleId].dockedAt,bicycles[bicycleId].isDocked);
+     function getBicycle(string memory bicycleId) public view returns(string memory, bool) {
+         return (bicycles[bicycleId].dockedAt, bicycles[bicycleId].isDocked);
      }
 
      function getRegisteredBicycleKeys() public onlyAdmin view returns(string[] memory) {
@@ -284,7 +283,7 @@
          dockingStations[dockingStation].availableBicyclesKeys.push(bicycleId);
          bicycles[bicycleId].isDocked = true;
          bicycles[bicycleId].dockedAt = dockingStation;
-         bicycles[bicycleId].lastDateBorrowed=now;
+         bicycles[bicycleId].lastDateBorrowed = now;
          dockingStations[dockingStation].availableBicycles[bicycleId] = bicycles[bicycleId];
          return true;
      }
@@ -294,4 +293,9 @@
          require(bicycles[bicycleId].active, "Bicycle not registered");
          return bicycles[bicycleId].isDocked;
      }
+     /*====================Bicycle functions Section Start ====================*/
+     function getCurrentRideCost() public view returns(uint256) {
+         return rideCost;
+     }
+
  }

@@ -76,11 +76,13 @@
                         This.success("Succesfully registered new bicycle")
                     }
                     This.isLoading = false
+                    This.bikeId=crypto.randomBytes(16).toString("hex")
                 }).catch((err) => {
                     console.log("Error whilst adding new bicycle!!")
                     console.log(err)
                     This.error("Error whilst adding new bicycle!!")
                     This.isLoading = false
+                    This.bikeId=crypto.randomBytes(16).toString("hex")
                 })
             },
             getDockingStations: function async () {

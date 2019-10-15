@@ -79,8 +79,9 @@
                         console.log(keys)
                         $state.loaded()   
                         keys.forEach((key) => {
-                            This.RhodeITSmartContract.methods.getUserCredit(key).call({
-                                gas: 8000000
+                            This.RhodeITSmartContract.methods.getUsercredit().call({
+                                gas: 8000000,
+                                from:key
                             }).then((credit, err) => {
                                 if (!err) {
                                     This.Users.push({
